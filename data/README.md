@@ -2,24 +2,24 @@
 
 ## Subdirectories
 
-* `documentation/`: This folder contains the data sent to me by Lauren, in its original formats and names, and documentation and procedural files for converting these data files to .csv, with the names here in `data/`. 
-	- These names are translated below. There are also documentation files (Word, Excel). The subdirectory `orig_names/` contains a) all of the original data files sent by Lauren, in their original formats and names, and b) the subdirectory `yws_clue_excel/`, which contains the code, virtual environment, and outputs of a python script to deconstruct the BCFR data Excel into 1 csv per Excel sheet. The README translates the names in this subdirectory to the names in `data/yws_clue`.
+* `documentation/`: Contains the following:
+	- Original data sent to me by Lauren, with original names.
+	- Key, translating those names to the csv names here in `data/` (key in the README)
+	- Documentation for the data files (Word, Excel). 
+	- In `/documentation/orig_names/yws_clueexcel/`: Code, virtual environment, & outputs from converting BCFR Excel spreadsheet to individual csvs. Includes key to translate these csv/Excel sheet names to the csv names here in `data/yws_clue/` (key in README)
 
 **BCFR data**
-
 * `yws_clue/`: Contains all csv files (12) from the BCRF data. Broadly: This directory contains data on XXXXX. *See this directory for an explanation of what the 12 csvs each are.
 
 ## Data files
 
 **Clue data** 
-
 * `cbc.csv`: 
 * `cpart.csv`: 
 * `csess.csv`: 
 * `ctrck.csv`:
 
 **Trans Clue data** 
-
 * `transclue.csv`: 
 
 

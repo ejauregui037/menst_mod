@@ -6,7 +6,7 @@ Menstrual modeling: Collaboration with L. Houghton
 
 **This directory is the root directory for this git repo. All scripts in this repo will set this directory, `menst_mod/`, to the working directory, and all filepaths will be relative to this root (e.g. `./data`).
 
-* `data` : Data files for project. Documentation included. Files are not pushed to git, just stored locally. *osf.io?*
+* `data/` : Data files for project. Documentation included. Files are not pushed to git, just stored locally. *osf.io?*
 
 
 Proposed projects:
