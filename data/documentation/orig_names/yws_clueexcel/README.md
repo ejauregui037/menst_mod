@@ -4,7 +4,7 @@ This subdirectory contains the code & original output csvs from converting the E
 
 * Python script was run in the venv (Recall: source venv/bin/activate; deactivate; which python; which python3; which pip; *run these commands in Terminal to make sure I am installing packages & running the python script in a virtual environment, straight from Terminal (e.g. python3 yws_cluexcel.py)*)
 
-* KEY: Translation of output names in this folder (which correpond directly to the sheet names in the Excel) to the csv names used in the code for the `menst_mod` repo as a whole, i.e. the names in `./data/yws_clue`: "output_..."
+* KEY: Translation of output names in this folder (which correpond directly to the sheet names in the Excel) to the csv names used in the code for the `menst_mod` repo as a whole, i.e. the names in `./data/yws_clue/`: "output_..."
 
 	- ALCOHOL_TOBACCO.csv = `ywsclue_alctob.csv`
 	- CLUE_Birth_Control.csv = `ywsclue_bc.csv`

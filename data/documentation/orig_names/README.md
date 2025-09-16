@@ -8,10 +8,10 @@ Anything in the format `name` -- `name.csv` is translating the name in this dire
 
 From Lauren: "We request the Clue data for the BCFR and LEGACY cohorts at the same time so these files have both but only uses these file for the LEGACY analysis as we have more updated data for the BCFR (BCGR study ids start with par or PAR). The word doc defines the variables."
 
-* `columbia_tracking_05_2022.csv` -- ctrack.csv
-* `columbia_birth_control_05_2022.csv` -- cbc.csv
-* `columbia_participants_05_2022.csv` -- cpart.csv
-* `columbia_sessions_05_2022.csv` -- csess.csv
+* `columbia_tracking_05_2022.csv` -- `ctrack.csv`
+* `columbia_birth_control_05_2022.csv` -- `cbc.csv`
+* `columbia_participants_05_2022.csv` -- `cpart.csv`
+* `columbia_sessions_05_2022.csv` -- `csess.csv`
 * Columbia Mailman Data - May 2022.docx *(documentation?)*
 
 **BCFR data**
