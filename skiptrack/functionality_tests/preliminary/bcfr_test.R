@@ -10,6 +10,7 @@ bcfr = read.csv("./data/yws_clue/ywsclue_track.csv")
 library(skipTrack)
 library(dplyr)
 library(tidyr)
+
 # id column is fine
 # I have to make a decision: here I will say that spotting == part of period
 unique(bcfr$category, ) # period, spotting, bc pill, iud, bc ring -- we will ignore everything except period, for now
@@ -18,6 +19,8 @@ unique(bcfr$category, ) # period, spotting, bc pill, iud, bc ring -- we will ign
 typeof(bcfr_skip$track_date_DtDemogr) # nice
 # check that with Lauren
 
+# unique(bcfr$category)
+# [1] "period"             "spotting"           "birth_control_pill" "iud"                "birth_control_ring"
 # exclude bc data
 bcfr_skip = bcfr[bcfr$category == "period" | bcfr$category == "spotting" ,] # none are missing? odd but i guess by definition these are ENTRIES in the clue app
 

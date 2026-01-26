@@ -4,7 +4,7 @@
 
 # To run with: skipTrack 
 
-setwd("~/Desktop/ColumbiaPhD/research_projects/Lauren_menstrualmodelingmethods/menst_mod")
+# setwd("~/Desktop/ColumbiaPhD/research_projects/Lauren_menstrualmodelingmethods/menst_mod")
 library(dplyr)
 library(tidyr) 
 

@@ -1,6 +1,6 @@
 # fit skipTrack with bcfr data, no covariates
-
-setwd("~/Desktop/ColumbiaPhD/research_projects/Lauren_menstrualmodelingmethods/menst_mod")
+# 
+setwd("~/Desktop/ColumbiaPhD/research_projects/Lauren_menstrualmodelingmethods/menst_mod") 
 library(skipTrack)
 
 # load skipTrack-processed data
