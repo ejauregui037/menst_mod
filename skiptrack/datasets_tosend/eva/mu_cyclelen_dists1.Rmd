@@ -1,0 +1,183 @@
+---
+title: "mu_cyclelen_dists1"
+output: html_document
+date: "2026-05-19"
+---
+
+# Distributions of mean cycle length 
+
+Updates from previous version (mu_cyclelen_dists.Rmd):
+
+* mean only
+* correct labels for Clue subset (i.e. Clue subset, not skipTrack subset)
+* change bin labels to match survey & set "halfway" bin limits (e.g. 22.5 vs. 23 or 22)
+* remove x axes to enable vertical stacking
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F)
+```
+
+Mean cycle length distributions from... 
+
+* a) self-report ("average cycle length")
+* b) skipTrack (following same bins) -- with...
+  - i) no correction
+  - ii) simple cij "correction" to each observed cycle
+  - iii) inferred mean cycle lengths for each individual
+
+```{r, include=F, echo=F}
+rm(list=ls())
+
+project_folder = paste0(print(here::here()),'/') # detects folder where file is OR base of git repo -- here, thats:
+# setwd("~/Desktop/ColumbiaPhD/research_projects/Lauren_menstrualmodelingmethods/menst_mod") # keeps sourcing clean in this document
+
+# NOTE: this is not as good of programming practice, but currently code is set to expect a working directory set to the head of the git repo... causes issues with scripts sourced (e.g. mu_is.R) otherwise
+setwd(project_folder)
+
+source(paste0(project_folder,'skiptrack/datasets_tosend/eva/mu_is.R'))
+# source("./skiptrack/datasets_tosend/eva/mu_is.R")
+
+# libraries
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+```
+
+Four different plots:
+
+1. BCFR YWS self-report (survey)
+
+2. Clue subset of BCFR YWS self-report (survey)
+
+3. skipTrack Correction #1 -- divide by c_ijs (simpler, less robust)
+
+4. skipTrack Correction #2 -- More theoretical support (imo): inferred $\mu_i$s (median cycle lengths for each individual $i$) & calculated corresponding mean cycle length (from lognormal dist.--simple equation to convert median-->mean) 
+
+5.19.26 
+
+# Update: mean cycle length distributions only, organized in a single plot
+
+I do not plot median at all... although it is worth thinking about what people mean when they say "average" cycle length in a survey -- do we usually give a number corresponding to the mean, or the median?
+
+*Note that messy codes (8,9,0, etc.) in BCFR YWS survey responses have been EXCLUDED.*
+
+```{r}
+# BCFR without messy codes : "average cycle length"
+bcfr_cyclen1 = bcfr_cyclen[bcfr_cyclen$MENSES_DAYS %in% c(1,2,3,4,5,6,7), ]
+
+# ALSO: this figure should match with Table 2. 
+# So: we exclude ~1~ individual missing the exposure data in Table 2. Specfically: PersonID = 40371538 is NA for STRESS_CT. You can check this for yourself by running lines 1-76 of stressmens_updated code.R, then the following:
+  # test = merged_df[merged_df$MENSES_DAYS!=8 & merged_df$MENSES_DAYS!=9,]
+  # test = test |> drop_na(MENSES_DAYS)
+  # sum(is.na(test$STRESS_CT))
+  # sum(is.na(test$STRESS_TH))
+  # test[is.na(test$STRESS_CT),]$PersonID
+bcfr_cyclen1 = bcfr_cyclen1[bcfr_cyclen1$PersonID!=40371538,] # theirs is >90 days, interestingly
+
+bcfr = bcfr_cyclen1 |>  ggplot(aes(x = MENSES_DAYS_fact)) + # if you already made a table: y = Frequency
+  geom_bar(color = "pink", fill = "pink") + # if you have already made table: stat = "identity", 
+  labs(title = "BCFR YWS full sample (BCFR survey)",
+       subtitle = "n = 302") + 
+  ylim(0,200) + # otherwise it cuts off at 150 & is very distracting
+  labs(x = "Average Cycle Length") + 
+  theme_classic() + 
+  theme(axis.text = element_text(size = 7))
+  # scale_x_discrete(drop = FALSE)
+  # theme_classic()
+```
+
+```{r}
+# clue subset -- self reported cycle length IN BCFR YWS
+
+# remove messy
+library(forcats)
+bcfr_cyclen_clue1 = bcfr_cyclen_clue[bcfr_cyclen_clue$MENSES_DAYS %in% c(1,2,3,4,5,6,7), ]
+bcfr_cyclen_clue1$MENSES_DAYS_fact = fct_drop(bcfr_cyclen_clue1$MENSES_DAYS_fact, only = c("8__code", "9__code"))
+
+cluebcfr = bcfr_cyclen_clue1 |>  ggplot(aes(x = MENSES_DAYS_fact)) + # if you already made a table: y = Frequency
+  geom_bar(color = "navy", fill = "navy") + # if you have already made table: stat = "identity", 
+  labs(title = "BCFR YWS Clue subset (BCFR survey)",
+       subtitle = "n = 56") + 
+  ylim(0,45) + # otherwise it cuts off at 150 & is very distracting
+  labs(x = "Average Cycle Length") + 
+  theme_classic() + 
+  theme(axis.text = element_text(size = 7))+ 
+  scale_x_discrete(drop = FALSE)
+  # theme_classic()
+```
+
+```{r}
+# Clue subset -- mean cycle length, reported IN CLUE
+
+# NOTE: "skiptrack" in this object name is misleading!
+cluesubset = bcfryws_skiptrack_meanmed |>  ggplot(aes(x = mean_cycle_bin1)) + # if you already made a table: y = Frequency
+  geom_bar(color = "lightblue", fill = "lightblue") + # if you have already made table: stat = "identity", 
+  labs(title = "BCFR YWS Clue subset (Clue data)", subtitle = "n = 56") + 
+  ylim(0,45) + # otherwise it cuts off at 150 & is very distracting
+  labs(x = "Mean Cycle Length") + 
+  theme_classic() + 
+  theme(axis.text = element_text(size = 7))+ 
+  scale_x_discrete(drop = FALSE)
+  # theme_classic()
+```
+
+```{r}
+# skiptrack -- cij correction
+
+cijskip = cij_corrected |>  ggplot(aes(x = mean_corrected_bin1)) + # if you already made a table: y = Frequency
+  geom_bar(color = "lightblue", fill = "lightblue") + # if you have already made table: stat = "identity", 
+  labs(title = "BCFR YWS Clue subset (skipTrack cij-corrected)", subtitle = "n = 56") + 
+  ylim(0,45) + # otherwise it cuts off at 150 & is very distracting
+  labs(x = "Mean Cycle Length") + 
+  theme_classic() + 
+  theme(axis.text = element_text(size = 7))+ 
+  scale_x_discrete(drop = FALSE)
+  # theme_classic()
+```
+
+```{r}
+# skiptrack -- inferred
+
+muiskp = mu_skp |>  ggplot(aes(x = mean_cycle_bin1)) + # if you already made a table: y = Frequency
+  geom_bar(color = "lightblue", fill = "lightblue") + # if you have already made table: stat = "identity", 
+  labs(title = "BCFR YWS Clue subset (skipTrack inferred)", subtitle = "n = 56",
+       caption = "continuous, so bounds are e.g. [25.5, 32.5)... etc.") + 
+  ylim(0,45) + # otherwise it cuts off at 150 & is very distracting
+  labs(x = "Mean Cycle Length") + 
+  theme_classic() + 
+  theme(axis.text = element_text(size = 7))+ 
+  scale_x_discrete(drop = FALSE)
+  # theme_classic()
+```
+
+```{r, fig.height=15, fig.width=5, warning=FALSE, message=FALSE}
+
+# mess with fig.height & fig.width to get figure proportions for paper! : )
+
+# COMBINE & PLOT
+library(patchwork)
+# https://patchwork.data-imaginist.com/articles/guides/layout.html
+
+(bcfr) /
+(cluebcfr) /
+(cluesubset) / 
+(cijskip )/
+(muiskp) 
+
+# bcfr + cluebcfr + cluesubset + cijskip + muiskp + 
+#   plot_layout(ncol=1, heights = c(20, 10, 10, 10, 10))  # this changes the relative heights!
+```
+
+
+5.19.26 updat:
+
+did we address these commetns back in 4.5.26?
+
+## Comments:
+* I didn't have the codebook for the BCFR MENSES_DAYS variable, so I inferred from Lauren's plot -- (a) the bin #s & (b) that "8" & "9" are missing/don't know/too variable to say? Why are there two codes for that?
+* Fewer super high or super low average cycles reported in skipTrack (none <21 or >90, for mean or median); same when "corrected" by cij & inferred by skipTrack. 
+* (!) My plot & Eva's plot do not agree for the mean self-reported cycle length in the Clue subset -- (a) I have zero individuals in the 36-60 bin AND the 61-90 bin...? Looking at Eva's plots in the ppt, there are very few ppl total with 61-90 reported in YWS (<12 for sure), but 11-ish in the Clue subset... ? Can we compare the dfs we created for this?
+
+*This makes sense: skipTrack doesn't truly believe that ANYONE has a true average cycle greater than 60 days or less than 20 days. For individuals who experience those cycles regularly, skipTrack infers that they have highly irregular cycles, and that their true mean/median is centered somewhere closer to 30 days. Note that this is based on the data people report, not anything normative in skipTrack.*
+

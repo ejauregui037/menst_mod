@@ -1,0 +1,251 @@
+---
+title: "Cycle length distributions"
+output: html_document
+date: "2026-03-30"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F)
+```
+
+Mean & median cycle length distributions from... 
+
+* a) self-report ("average cycle length")
+* b) skipTrack (following same bins) -- with...
+  - i) no correction
+  - ii) simple cij "correction" to each observed cycle
+  - iii) inferred median/mean cycle lengths for each individual
+
+```{r, include=F, echo=F}
+setwd("~/Desktop/ColumbiaPhD/research_projects/Lauren_menstrualmodelingmethods/menst_mod") # keeps sourcing clean in this document
+source("./skiptrack/datasets_tosend/eva/mu_is.R")
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+```
+
+```{r}
+library(ggplot2)
+# make visually pretty
+
+bcfr_cyclen |>  ggplot(aes(x = MENSES_DAYS_fact)) + # if you already made a table: y = Frequency
+  geom_bar(color = "pink", fill = "pink") + # if you have already made table: stat = "identity", 
+  labs(title = "Self-reported 'average cycle'",
+       subtitle = "n = 398") + 
+  ylim(0,200) + # otherwise it cuts off at 150 & is very distracting
+  labs(x = "Cycle Length") + 
+  theme_minimal() + 
+  theme(axis.text = element_text(size = 7))
+  # theme_classic()
+```
+```{r}
+# remove messy codes
+bcfr_cyclen1 = bcfr_cyclen[bcfr_cyclen$MENSES_DAYS %in% c(1,2,3,4,5,6,7), ]
+
+bcfr_cyclen1 |>  ggplot(aes(x = MENSES_DAYS_fact)) + # if you already made a table: y = Frequency
+  geom_bar(color = "pink", fill = "pink") + # if you have already made table: stat = "identity", 
+  labs(title = "Self-reported 'average cycle' -- messy codes excluded",
+       subtitle = "n = 303") + 
+  ylim(0,200) + # otherwise it cuts off at 150 & is very distracting
+  labs(x = "Cycle Length") + 
+  theme_minimal() + 
+  theme(axis.text = element_text(size = 7))
+  # theme_classic()
+```
+
+
+```{r}
+# clue subset -- self reported cycle length 
+bcfr_cyclen_clue |>  ggplot(aes(x = MENSES_DAYS_fact)) + # if you already made a table: y = Frequency
+  geom_bar(color = "navy", fill = "navy") + # if you have already made table: stat = "identity", 
+  labs(title = "Self-reported 'average cycle' -- in Clue subset",
+       subtitle = "n = 56") + 
+  ylim(0,30) + # otherwise it cuts off at 150 & is very distracting
+  labs(x = "Cycle Length") + 
+  theme_minimal() + 
+  theme(axis.text = element_text(size = 7))
+  # theme_classic()
+```
+
+
+
+```{r}
+bcfryws_skiptrack_meanmed |>  ggplot(aes(x = median_cycle_bin)) + # if you already made a table: y = Frequency
+  geom_bar(color = "lavender", fill = "lavender") + # if you have already made table: stat = "identity", 
+  labs(title = "skipTrack-reported MEDIAN cycle", subtitle = "n = 56",
+       caption = "lower bound inclusive, upper bound exclusive -- except at 90 cutoff (to match questionnaire)") + 
+  ylim(0,45) + # otherwise it cuts off at 150 & is very distracting
+  labs(x = "Cycle Length") + 
+  theme_minimal() + 
+  theme(axis.text = element_text(size = 7))
+  # theme_classic()
+
+bcfryws_skiptrack_meanmed |>  ggplot(aes(x = mean_cycle_bin)) + # if you already made a table: y = Frequency
+  geom_bar(color = "lightblue", fill = "lightblue") + # if you have already made table: stat = "identity", 
+  labs(title = "skipTrack-reported MEAN cycle", subtitle = "n = 56",
+       caption = "lower bound inclusive, upper bound exclusive -- except at 90 cutoff (to match questionnaire)") + 
+  ylim(0,45) + # otherwise it cuts off at 150 & is very distracting
+  labs(x = "Cycle Length") + 
+  theme_minimal() + 
+  theme(axis.text = element_text(size = 7))
+  # theme_classic()
+```
+
+## skipTrack Correction #1 
+
+Simpler: divide by c_ijs : 
+
+```{r}
+cij_corrected |>  ggplot(aes(x = median_corrected_bin)) + # if you already made a table: y = Frequency
+  geom_bar(color = "lavender", fill = "lavender") + # if you have already made table: stat = "identity", 
+  labs(title = "skipTrack-cij-corrected MEDIAN cycle", subtitle = "n = 56",
+       caption = "lower bound inclusive, upper bound exclusive -- except at 90 cutoff (to match questionnaire)") + 
+  ylim(0,45) + # otherwise it cuts off at 150 & is very distracting
+  labs(x = "Cycle Length") + 
+  theme_minimal() + 
+  theme(axis.text = element_text(size = 7))
+  # theme_classic()
+
+cij_corrected |>  ggplot(aes(x = mean_corrected_bin)) + # if you already made a table: y = Frequency
+  geom_bar(color = "lightblue", fill = "lightblue") + # if you have already made table: stat = "identity", 
+  labs(title = "skipTrack-cij-corrected MEAN cycle", subtitle = "n = 56",
+       caption = "lower bound inclusive, upper bound exclusive -- except at 90 cutoff (to match questionnaire)") + 
+  ylim(0,45) + # otherwise it cuts off at 150 & is very distracting
+  labs(x = "Cycle Length") + 
+  theme_minimal() + 
+  theme(axis.text = element_text(size = 7))
+  # theme_classic()
+```
+
+
+## skipTrack Correction #2 
+
+More complete: inferred mu_is (median cycle length) & calculated corresponding mean cycle length (within lognormal dist.) : 
+
+```{r}
+mu_skp |>  ggplot(aes(x = median_cycle_bin)) + # if you already made a table: y = Frequency
+  geom_bar(color = "lavender", fill = "lavender") + # if you have already made table: stat = "identity", 
+  labs(title = "skipTrack-inferred MEDIAN cycle", subtitle = "n = 56",
+       caption = "lower bound inclusive, upper bound exclusive -- except at 90 cutoff (to match questionnaire)") + 
+  ylim(0,50) + # otherwise it cuts off at 150 & is very distracting
+  labs(x = "Cycle Length") + 
+  theme_minimal() + 
+  theme(axis.text = element_text(size = 7))
+  # theme_classic()
+
+mu_skp |>  ggplot(aes(x = mean_cycle_bin)) + # if you already made a table: y = Frequency
+  geom_bar(color = "lightblue", fill = "lightblue") + # if you have already made table: stat = "identity", 
+  labs(title = "skipTrack-inferred MEAN cycle", subtitle = "n = 56",
+       caption = "lower bound inclusive, upper bound exclusive -- except at 90 cutoff (to match questionnaire)") + 
+  ylim(0,50) + # otherwise it cuts off at 150 & is very distracting
+  labs(x = "Cycle Length") + 
+  theme_minimal() + 
+  theme(axis.text = element_text(size = 7))
+  # theme_classic()
+```
+
+
+
+## Comments:
+* I didn't have the codebook for the BCFR MENSES_DAYS variable, so I inferred from Lauren's plot -- (a) the bin #s & (b) that "8" & "9" are missing/don't know/too variable to say? Why are there two codes for that?
+* Fewer super high or super low average cycles reported in skipTrack (none <21 or >90, for mean or median); same when "corrected" by cij & inferred by skipTrack. 
+* (!) My plot & Eva's plot do not agree for the mean self-reported cycle length in the Clue subset -- (a) I have zero individuals in the 36-60 bin AND the 61-90 bin...? Looking at Eva's plots in the ppt, there are very few ppl total with 61-90 reported in YWS (<12 for sure), but 11-ish in the Clue subset... ? Can we compare the dfs we created for this?
+
+*This makes sense: skipTrack doesn't truly believe that ANYONE has a true average cycle greater than 60 days or less than 20 days. For individuals who experience those cycles regularly, skipTrack infers that they have highly irregular cycles, and that their true mean/median is centered somewhere closer to 30 days. Note that this is based on the data people report, not anything normative in skipTrack.*
+
+
+
+
+# Update 4.5.26: mean cycle length distributions only, organized in a single plot
+
+```{r}
+# BCFR without messy codes : "average cycle length"
+
+bcfr = bcfr_cyclen1 |>  ggplot(aes(x = MENSES_DAYS_fact)) + # if you already made a table: y = Frequency
+  geom_bar(color = "pink", fill = "pink") + # if you have already made table: stat = "identity", 
+  labs(title = "Self-reported 'average cycle length' (BCFR sample)",
+       subtitle = "n = 303") + 
+  ylim(0,200) + # otherwise it cuts off at 150 & is very distracting
+  labs(x = "Cycle Length") + 
+  theme_minimal() + 
+  theme(axis.text = element_text(size = 15))
+  # theme_classic()
+```
+
+```{r}
+# clue subset -- self reported cycle length
+
+# remove messy
+library(forcats)
+bcfr_cyclen_clue1 = bcfr_cyclen_clue[bcfr_cyclen_clue$MENSES_DAYS %in% c(1,2,3,4,5,6,7), ]
+bcfr_cyclen_clue1$MENSES_DAYS_fact = fct_drop(bcfr_cyclen_clue1$MENSES_DAYS_fact, only = c("8__code", "9__code"))
+
+cluebcfr = bcfr_cyclen_clue1 |>  ggplot(aes(x = MENSES_DAYS_fact)) + # if you already made a table: y = Frequency
+  geom_bar(color = "navy", fill = "navy") + # if you have already made table: stat = "identity", 
+  labs(title = "Self-reported 'average cycle length' (Clue subset)",
+       subtitle = "n = 56") + 
+  ylim(0,50) + # otherwise it cuts off at 150 & is very distracting
+  labs(x = "Cycle Length") + 
+  theme_minimal() + 
+  theme(axis.text = element_text(size = 7))+ 
+  scale_x_discrete(drop = FALSE)
+  # theme_classic()
+```
+
+```{r}
+# skiptrack -- mean cycle length, reported
+
+skiptrack = bcfryws_skiptrack_meanmed |>  ggplot(aes(x = mean_cycle_bin)) + # if you already made a table: y = Frequency
+  geom_bar(color = "lightblue", fill = "lightblue") + # if you have already made table: stat = "identity", 
+  labs(title = "skipTrack-reported mean cycle length", subtitle = "n = 56",
+         caption = " ") + # "lower bound inclusive, upper bound exclusive -- except at 90 cutoff (to match questionnaire)"
+  ylim(0,50) + # otherwise it cuts off at 150 & is very distracting
+  labs(x = "Cycle Length") + 
+  theme_minimal() + 
+  theme(axis.text = element_text(size = 7))+ 
+  scale_x_discrete(drop = FALSE)
+  # theme_classic()
+```
+
+```{r}
+# skiptrack -- cij correction
+
+cijskip = cij_corrected |>  ggplot(aes(x = mean_corrected_bin)) + # if you already made a table: y = Frequency
+  geom_bar(color = "lightblue", fill = "lightblue") + # if you have already made table: stat = "identity", 
+  labs(title = "skipTrack-corrected mean cycle length (c_ij)", subtitle = "n = 56",
+         caption = " ") + # "lower bound inclusive, upper bound exclusive -- except at 90 cutoff (to match questionnaire)" 
+  ylim(0,50) + # otherwise it cuts off at 150 & is very distracting
+  labs(x = "Cycle Length") + 
+  theme_minimal() + 
+  theme(axis.text = element_text(size = 7))+ 
+  scale_x_discrete(drop = FALSE)
+  # theme_classic()
+```
+
+```{r}
+# skiptrack -- inferred
+
+muiskp = mu_skp |>  ggplot(aes(x = mean_cycle_bin)) + # if you already made a table: y = Frequency
+  geom_bar(color = "lightblue", fill = "lightblue") + # if you have already made table: stat = "identity", 
+  labs(title = "skipTrack-inferred mean cycle length (mu_i)", subtitle = "n = 56",
+       caption = "Category lower bounds are inclusive. Upper bounds are exclusive, except for 61-90 day group (90 inclusive).") + # "lower bound inclusive, upper bound exclusive -- except at 90 cutoff (to match questionnaire)"
+  ylim(0,50) + # otherwise it cuts off at 150 & is very distracting
+  labs(x = "Cycle Length") + 
+  theme_minimal() + 
+  theme(axis.text = element_text(size = 7)) + 
+  scale_x_discrete(drop = FALSE)
+  # theme_classic()
+```
+
+```{r, fig.height=6, fig.width=10, warning=FALSE, message=FALSE}
+# COMBINE & PLOT
+library(patchwork)
+
+bcfr
+
+# Arrange 2x3: 3 per row (3+3) over 2 rows (/), or 2 plots per column (p1+p2+p3)/(p4+p5+p6)
+(cluebcfr | skiptrack) / 
+( cijskip | muiskp) 
+```
+
+
