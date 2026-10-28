@@ -13,6 +13,6 @@
 		- MCMC convergence diagnostics (see previous writeups)
 	- Custom script/function for sampling efficiently from these posteriors ^ for MIME-type sampling (propagation of $\tau_i$ uncertainty to regression coefficient estimates)
 
-
+* `mu_cyclelen_dists1.Rmd` -- Generates mean cycle length distributions -- a) raw, b) c_ij-corrected, c) median from SkipTrack, d) mean derived from SkipTrack median (under distributional assumptions) 
 
 
